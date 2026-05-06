@@ -103,7 +103,7 @@ public:
      * this method returns: 
      * \f$ \sqrt{ (loc1.x - loc2.x)^2 + (loc1.y - loc2.y)^2 } \f$
      * Note that this method can be implemented using the squaredDistance() 
-     * method.
+     * method
      * Query method
      * @param location A Location object. Input parameter
      * @return The Euclidean distante from this location to the provided 

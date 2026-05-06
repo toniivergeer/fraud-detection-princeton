@@ -32,25 +32,46 @@ public:
      * size and capacity equal to the provided value (@p size). Each element
      * will be filled with a value equal to 0.
      * @throw std::out_of_range Throws a std::out_of_range exception if
-     * @p size < 0 or size>DIM_VECTOR_VALUES
+     * @p size < 0
      * @param size The size for the vector of integers in this object. Input
      * parameter
      */
     VectorInt(int size=0);
     
     /**
+     * @brief Copy constructor
+     * @param orig the VectorInt object used as source for the copy. Input
+     * parameter
+     */
+    VectorInt(VectorInt orig);
+    
+    /**
+     * @brief Destructor
+     */
+    ~VectorInt();
+    
+    /**
+     * @brief Overloading of the assignment operator for VectorInt class
+     * Modifier method
+     * @param orig the VectorInt object used as source for the assignment. Input
+     * parameter
+     * @return A reference to this object
+     */
+    VectorInt operator=(VectorInt orig);
+    
+    /**
      * @brief Gets the number of elements in the vector of this object
      * Query method
      * @return The number of elements
      */
-    int getSize() const;
+    int getSize();
     
     /**
      * @brief Gets the capacity of the vector in this object
      * Query method
      * @return The capacity of the vector in this object
      */
-    int getCapacity() const;
+    int getCapacity();
     
     /**
      * @brief Compares the integer vectors of this object and the provided 
@@ -67,7 +88,8 @@ public:
      * @return The number of identical elements in the vectors of this
      * and the provided object.
      */
-    int countIdenticalElements(const VectorInt &other) const;
+    int countIdenticalElements(VectorInt other);
+
     
     /**
      * @brief Obtains a string with information about this VectorInt object, 
@@ -79,7 +101,7 @@ public:
      * Query method
      * @return string with information about this VectorInt object
      */
-    std::string toString() const;
+    std::string toString();
 
     /**
      * @brief Gets the Euclidean distance between this and the provided object.
@@ -96,7 +118,7 @@ public:
      * @param other A VectorInt. Input parameter
      * @return The Euclidean distance between this and the provided objects
      */
-    double distance(const VectorInt &other) const;
+    double distance(VectorInt other);
     
     /**
      * @brief Assigns the provided value to all the elements in this vector
@@ -108,8 +130,9 @@ public:
     /**
      * @brief Appends the given integer value at the end (first free position) 
      * of the array of integers in this object. 
-     * @throw std::out_of_range Throws a std::out_of_range exception if the 
-     * array of Location was full (its capacity was full).
+     * If the dynamic array of integers was full (its capacity was full), this
+     * method automatically reallocates a new array with a capacity equal to 
+     * the current capacity plus an extra block of size equal to BLOCK_SIZE.
      * Modifier method
      * @param value the new integer value to be appended. Input parameter
      */
@@ -132,7 +155,7 @@ public:
      * given position is not valid.
      * @return A const reference to the integer element at the given position
      */
-    const int &at(int pos) const;
+    int at(int pos);
     
     /**
      * @brief Gets a reference to the integer element at the given position. 
@@ -142,24 +165,30 @@ public:
      * given position is not valid
      * @return A reference to the integer element at the given position.
      */
-    int &at(int pos);
-
+    int at(int pos);
+    
 private:
     /**
-     * Constant with the capacity of the array _values
+     * Pointer to a dynamic array of integers
      */
-    static const int DIM_VECTOR_VALUES = 100; 
-
-    /**
-     * Array of integers with the integer elements in this object
-     */
-    int _values[DIM_VECTOR_VALUES];
+    int* _values;
     
     /**
-     * Number of elements contained in the array _values
+     * Number of elements contained in the dynamic array _values
      */
     int _size;
+    
+    /**
+     * Maximun number of elements that can be stored in the dynamic array
+     * _values
+     */
+    int _capacity;
+    
+    /**
+     * Size of new memory blocks when resizing the dynamic array _values
+     */
+    static const int BLOCK_SIZE=20; 
 
 }; // end of class VectorInt
 
-#endif // VECTORINT_H //
+#endif /* VECTORINT_H */
