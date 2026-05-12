@@ -129,6 +129,7 @@ VectorInt::~VectorInt(){
  * @return A reference to this object
  */
     VectorInt& VectorInt::operator=(const VectorInt& orig){
+        
         if( this != &orig){ //evitamos que LiberarMemoria() libere la memoria del propio objeto en caso de que ocurra.
             liberarMemoria();
             
@@ -175,8 +176,8 @@ int VectorInt::getCapacity()const{
  * and the provided object.
  */
 
-// otro que como es query method le pongo el const
 int VectorInt::countIdenticalElements(const VectorInt& other)const{
+    
     int cont= 0;
 
     if (_size != other.getSize()) {
@@ -184,7 +185,11 @@ int VectorInt::countIdenticalElements(const VectorInt& other)const{
     }
 
     for(int i=0; i<_size ; i++){
-        if(_values[i] == other.at(i)) cont++;
+
+        if(_values[i] == other.at(i)){
+
+            cont++;
+        }
     }
     return cont;
 };
@@ -199,13 +204,17 @@ int VectorInt::countIdenticalElements(const VectorInt& other)const{
  * Query method
  * @return string with information about this VectorInt object
  */
-// es una query, aniadir const 
-std::string VectorInt::toString()const{
+
+ std::string VectorInt::toString()const{
+
     std::string result = std::to_string(_size) + "\n";
+
     for (int i = 0; i < _size; i++) {
-        std::string espacio = ( i == _size -1) ? "\n" : " ";
-        result += std::to_string(_values[i]) + espacio;
+
+        result += std::to_string(_values[i]);
+        result += (i == _size - 1) ? "\n" : " ";
     }
+
     return result;
 };
 
@@ -225,16 +234,19 @@ std::string VectorInt::toString()const{
  * @return The Euclidean distance between this and the provided objects
  */
 double VectorInt::distance(const VectorInt& other)const{
-    if (_size != other.getSize()) {
+    
+    if (_size != other.getSize()) 
         throw std::invalid_argument("distance: tamanios diferentes");
-    }
-    if (_size == 0) {
+    
+    if (_size == 0) 
         throw std::invalid_argument("distance: tamanio es cero");
-    }
-    double sum = 0;
+    
+    double sum = 0.0;
+
     for (int i = 0; i < _size; i++) {
-        sum += std::pow(_values[i] - other.at(i), 2);
+        sum += std::pow(_values[i] - other._values[i], 2);
     }
+
     return std::sqrt(sum);
 };
 
