@@ -13,26 +13,71 @@
  * and a size (number of elements the vector currently contains).
  */
 
-/**
-*_____________________________________________
-*
-* Constant with the capacity of the array _values
-*
-* static const int DIM_VECTOR_VALUES = 100; 
-*______________________________________________
-*
-* Array of integers with the integer elements in this object
-*
-* int _values[DIM_VECTOR_VALUES];
-*______________________________________________
-*
-* 
-* Number of elements contained in the array _values
-*
-* int _size;
-*______________________________________________
-**/
+//-------------------MÉTODOS PRIVADOS DE LA GESTIÓN DE MEMORIA-------------------
 
+    /**
+     * @brief Reserva un array dinámico de cap elementos e inicializa los valores
+     * _values, _size y _capacity (los elementos los pone a 0).
+     */
+
+    void VectorInt::reservarMemoria(int cap){
+        _capacity = cap;
+        _size = 0;
+
+        if (cap > 0){ //si se introduce una cap posible, se establece un vector de memoria dinámica de tal capacidad.
+
+            _values = new int[cap]; 
+
+            for (int i = 0; i < cap; i++){
+                _values[i] = 0;
+            }
+        }
+        else{ //en caso de que cap no sea posible, se asigna nullptr.
+            _values = nullptr;
+        }
+    }
+
+    /**
+     * @brief Libera la memoria dinámica, estableciendo _values = nullptr.
+     */
+
+    void VectorInt::liberarMemoria(){
+        delete[] _values;
+        _capacity = 0;
+        _size = 0;
+        _values = nullptr;
+    }
+
+    /**
+     * @brief Aumenta la capacidad del array en BLOCK_SIZE posiciones (crea un array
+     * auxiliar, copia los elementos y elimina el antiguo).
+     */
+
+    void VectorInt::aumentCapacidadMemoria(){
+        int _capacity =+ BLOCK_SIZE;
+        int* aux = new int[_capacity];
+
+        for (int i = 0; i < _size; i++){
+            aux[i] = _values[i];
+        }
+
+        delete[] _values;
+        _values = aux;
+    }
+
+    /**
+     * @brief Copia el contenido del VectorInt original en este objeto. Se asume que
+     * el tamaño de memoria de _values ya ha sido reservada.
+     */
+
+    void VectorInt::CopiarVectorInt(const VectorInt& vectorOriginal){
+        _size = vectorOriginal._size;
+        _capacity = vectorOriginal._capacity;
+
+        for(int i = 0; i < _size; i++){
+            _values[i] = vectorOriginal._values[i];
+        }
+    }
 
 /**
  * @brief It builds a VectorInt object (vector of integers) with a 
@@ -220,3 +265,4 @@ int &VectorInt::at(int pos){
     }
     return _values[pos]; 
 };
+
