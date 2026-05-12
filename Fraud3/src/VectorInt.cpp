@@ -89,16 +89,56 @@
  * parameter
  */
 VectorInt::VectorInt(int size) {
-    if (size < 0 || size > DIM_VECTOR_VALUES) {
-        throw std::out_of_range("VectorInt: size invalido, que sea entre 1 y 100");
+    if (_size < 0){
+        throw std::out_of_range("VectorInt: _size invalido, que debe ser <= 0");
     }
-    _size = size;
-    
-    for (int i = 0; i < size; i++) {
-        _values[i] = 0;
-    }
+
+    reservarMemoria(size);
+    _size = size; //esto lo hacemos ya que el método reservarMemoria establece _size = 0
+
 };
 
+/**
+ * @brief Copy constructor
+ * @param orig the VectorInt object used as source for the copy. Input
+ * parameter
+ */
+VectorInt::VectorInt(const VectorInt& orig) {
+    _values = nullptr;      // evitar que deallocate() libere basura
+    _size     = 0;
+    _capacity = 0;
+ 
+    if (orig._capacity > 0) {
+        _values = new int[orig._capacity];
+        CopiarVectorInt(orig);
+    }
+}
+
+/**
+ * @brief Destructor
+ */
+VectorInt::~VectorInt(){
+    liberarMemoria();
+}
+
+/**
+ * @brief Overloading of the assignment operator for VectorInt class
+ * Modifier method
+ * @param orig the VectorInt object used as source for the assignment. Input
+ * parameter
+ * @return A reference to this object
+ */
+    VectorInt& VectorInt::operator=(const VectorInt& orig){
+        if( this != &orig){ //evitamos que LiberarMemoria() libere la memoria del propio objeto en caso de que ocurra.
+            liberarMemoria();
+            
+            reservarMemoria(orig._capacity);
+            
+            CopiarVectorInt(orig);
+        }
+
+        return *this;
+    }
 /**
  * @brief Gets the number of elements in the vector of this object
  * Query method
@@ -116,7 +156,7 @@ int VectorInt::getSize()const{
  * @return The capacity of the vector in this object
  */
 int VectorInt::getCapacity()const{
-    return DIM_VECTOR_VALUES;
+    return _capacity;
 };
 
 /**
