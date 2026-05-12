@@ -189,6 +189,35 @@ private:
      */
     static const int BLOCK_SIZE=20; 
 
+    // Métodos privados para la gestión de memoria
+
+    /**
+     * @brief Reserva un array dinámico de cap elementos e inicializa los valores
+     * _values, _size y _capacity (los elementos los pone a 0).
+     */
+
+    void reservarMemoria(int cap);
+
+    /**
+     * @brief Libera la memoria dinámica, estableciendo _values = nullptr.
+     */
+
+    void liberarMemoria();
+
+    /**
+     * @brief Aumenta la capacidad del array en BLOCK_SIZE posiciones (crea un array
+     * auxiliar, copia los elementos y elimina el antiguo).
+     */
+
+    void aumentCapacidadMemoria();
+
+    /**
+     * @brief Copia el contenido del VectorInt original en este objeto. Se asume que
+     * el tamaño de memoria de _values ya ha sido reservada.
+     */
+
+    void CopiarVectorInt(const VectorInt& vectorOriginal);
+    
 }; // end of class VectorInt
 
 #endif /* VECTORINT_H */
