@@ -270,9 +270,9 @@ void VectorInt::assign(int value){
  * @param value the new integer value to be appended. Input parameter
  */
 void VectorInt::append(int value){
-    if (_size >= DIM_VECTOR_VALUES) {
-        throw std::out_of_range("VectorInt::append el array esta lleno");
-    }
+    if (_size >= _capacity)
+        aumentCapacidadMemoria();
+        
     _values[_size] = value;
     _size++;
 };
