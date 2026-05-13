@@ -179,7 +179,7 @@ std::string Clustering::getStatistics() const{
  * @result Devuelve true si son equivalentes (se cumple lo ya mencionado); falso si
  * no se cumple.
  */
-bool Clustering::isEquivalentTo(const Clustering& other) const{ //PONER CONST
+bool Clustering::isEquivalentTo(const Clustering& other) const{ 
     bool result_equivalence = false;
 
     if(_isDone && other._isDone
