@@ -65,7 +65,7 @@ public:
      * @param orig the DataSet object used as source for the copy. 
      * Input parameter
      */
-    DataSet(DataSet orig);
+    DataSet(const DataSet& orig);
     
     /**
      * @brief Destructor
@@ -79,21 +79,21 @@ public:
      * Input parameter
      * @return A reference to this object
      */
-    DataSet operator=(DataSet orig);
+    DataSet& operator=(const DataSet& orig);
 
     /**
      * @brief Gets the number of instances in this DataSet
      * Query method
      * @return The number of instances in this DataSet
      */
-    int getNumInstances();
+    int getNumInstances() const;
     
     /**
      * @brief Gets the number of localizations in this DataSet
      * Query method
      * @return The number of localizations in this DataSet
      */
-    int getNumLocations(); 
+    int getNumLocations() const; 
     
     /**
      * @brief Gets the value for the instance instanceIndex at the localization
@@ -110,7 +110,7 @@ public:
      * @return The value for the instance instanceIndex at the localization
      * locationIndex
      */   
-    int getValue(int instanceIndex, int locationIndex);
+    int getValue(int instanceIndex, int locationIndex) const;
     
     /**
      * @brief Gets the label (integer value) of the instance at the provided
@@ -123,7 +123,7 @@ public:
      * @return The label (integer value) of the instance at the provided
      * position
      */
-    int getLabel(int instanceIndex);
+    int getLabel(int instanceIndex) const;
     
     /**
      * @brief Gets a const reference to the vector of Location objects in this
@@ -132,14 +132,14 @@ public:
      * @return A const reference to the vector of Location objects in this
      * DataSet
      */
-    VectorLocation getVectorLocation();
+    VectorLocation getVectorLocation() const;
 
     /**
      * @brief Gets a const reference to the vector of labels in this DataSet
      * Query method
      * @return A const reference to the vector of labels in this DataSet
      */
-    VectorInt getVectorLabels();
+    VectorInt getVectorLabels() const;
     
     /**
      * @brief Obtains a string with information about this DataSet object, 
@@ -158,7 +158,7 @@ public:
      * Query method
      * @return string with information about this CrimeSet object
      */
-    std::string toString() ;
+    std::string toString() const;
 
     /**
      * @brief Sets a new value for the instance instanceIndex at the 
@@ -220,7 +220,7 @@ public:
      * @param fileName The name of the file where the DataSet will be saved. 
      * Input parameter
      */
-    void save(std::string fileName);
+    void save(std::string fileName) const;
 
     /**
      * @brief Loads into this object the DataSet information stored in the 
@@ -271,7 +271,7 @@ public:
      * Input parameter
      * @return A reduced DataSet
      */
-    DataSet getReducedDataSet(Clustering clustering);
+    DataSet getReducedDataSet(Clustering clustering) const;
 
 private:
     /**
@@ -312,6 +312,29 @@ private:
      * the order of the columns in the 2D matrix of this DataSet.
      */
     VectorLocation _locations;
+
+    //Metodos privados de gestion de memoria:
+
+    /**
+     * @brief Reserva la matriz dinámica 2D con _nInstances filas y _nLocations
+     * columnas. Todos los valores se inicializan a 0.
+     */
+
+    void reservarMatriz();
+
+    /**
+     * @brief Libera la memoria dinamica de la matriz 2D. Establece _values = nullptr.
+     */
+
+    void liberarMatriz();
+
+    /**
+     * @brief Copia la matriz 2D original en otra. Se asume que el tamaño de memoria
+     * reservada ya es el adecuado.
+     */
+
+    void copiarMatriz(const DataSet& matriz_orig);
+    
 }; // end of class DataSet
 
 #endif /* DATASET_H */
