@@ -5,17 +5,13 @@
 
 /**
  * @file main.cpp
- * @author estudiante1: Verger Vallespir, Toni
- * @author estudiante2: Ramírez Vida, Renato
+ * @author estudiante: Verger Vallespir, Toni
  */
 
 #include <iostream>
-#include <string>
-#include <fstream>
 
-#include "VectorLocation.h"
+#include "DataSet.h"
 #include "Clustering.h"
-#include "ArrayClustering.h"
 
 using namespace std;
 
@@ -26,123 +22,119 @@ using namespace std;
  * @param message Additional message to show with the help
  */
 void showHelp(std::ostream& outputStream, const string &message) {
-    outputStream << "ERROR in Fraud2 parameters. " << message << endl;
+    outputStream << "ERROR in Fraud3 parameters. " << message << endl;
     outputStream << "Run with the following arguments:" << endl;
-    outputStream << "Fraud2 <K> <minSeed> <maxSeed> <inputFile.loc>" << endl;
+    outputStream << "Fraud3 [-K <K>] [-o <outputFile.dts>] <inputFile.dts>" << 
+        endl;
     outputStream << endl;
     outputStream << "Parameters:" << endl;
-    outputStream << "<K>: an integer with the number of clusters to use in the K-means algorithm" << endl;
-    outputStream << "<minSeed>: an integer with the minimum seed value to use" << endl;
-    outputStream << "<maxSeed>: an integer with the maximum seed value to use" << endl;
-    outputStream << "<inputFile.loc>: name of the location file" << endl;
+    outputStream << "-K <K>: an integer with the number of clusters to use " << 
+        "(5 by default)" << endl;
+    outputStream << "-o <outputFile.dts>: name of the output dataset file " << 
+        "(tests/output/output.dts by default)" << endl;
+    outputStream << "<inputFile.dts>: name of the input dataset file" << endl;
     outputStream << endl;
 }
 
 /**
- * The purpose of this program is to read a set of locations from
- * a loc file and make different clustering processes of these locations, 
- * showing some statistics of the resulting clusterings on the standard output.
+ * The purpose of this program is to read a dataset from a dts file, to reduce 
+ * its dimensionality using clustering, and to save the resulting dataset in 
+ * another dts file.
  * 
- * The program first reads the locations from a file whose name is provided as 
- * the last command line argument. It also reads from the command line an 
- * integer K to set the number of clusters to be used in the clustering
- * processes. It also reads from the command line two integers minSeed and 
- * maxSeed  to set a range of seeds to be used in the different clustering 
- * processes. 
- * The program performs different clustering processes using the K-means 
- * algorithm with seeds in the range from minSeed to maxSeed 
- * (both included). The resulting Clustering objects are stored in an 
- * ArrayClustering object, that represents a dynamic array of Clustering 
- * objects. At the end, the program sorts the different Clustering objects
- * stored in the ArrayClustering object in ascending order of the sum of 
- * within-cluster variances. If two Clustering objects have the same sum of
- * within-cluster variances, they are further sorted by their number of
- * iterations in ascending order.
- * Finally, the program shows some statistics about each of clustering stored
- * in the ArrayClustering object, including the value of K, the sum of the 
- * within-cluster variances, and the number of iterations used by the 
- * clustering algorithm until convergence.
+ * The number of clusters K to be used in the clustering process can be provided
+ * as an optional argument (if not provided, K=5 is used). 
+ * The name of the output dts file can be provided to the program as an optional
+ * argument (if not provided, the output file is tests/output/output.dts). 
+ * The name of the input dts file is passed as the last argument to the program.
+ * See below the Running sintax.
  * 
- * Be careful to show the output as in the below example.
- *  
+ * The program begins by processing the command line arguments. Then, it loads 
+ * the input dataset from the given dts file. After that, it performs a  
+ * clustering of the locations in the dataset using the K-means algorithm with
+ * the provided K value. Then, using the calculated clustering, it obtains a new 
+ * dataset with reduced dimensionality. Finally, it saves the resulting dataset 
+ * in the given output dts file.
+ * 
  * Running sintax:
- * > build/Fraud2 <K> <minSeed> <maxSeed> <inputFile.loc>
+ * > build/Fraud3 [-K <K>] [-o <outputFile.dts>] <inputFile.dts>  
  * 
  * Running example:
- * > build/Fraud2 5 0 3 ../Datasets/dataP2/princeton_names.loc
-Clustering 0:
-K=5
-Sum of within-cluster variances: 194.455556
-Number of iterations: 3
-
-Clustering 1:
-K=5
-Sum of within-cluster variances: 233.319889
-Number of iterations: 3
-
-Clustering 2:
-K=5
-Sum of within-cluster variances: 250.044571
-Number of iterations: 3
+ * > build/Fraud3 -K 5 -o /tmp/princeton_training_reduced.dts ../Datasets/princeton_training.dts
  */
+
 int main(int argc, char* argv[]) {
-    ArrayClustering arrayClustering; // Object to store the different clusterings
-    VectorLocation locations; // Object to store the input locations
+    DataSet inputDataset, // Input dataset
+        outputDataset; // Output dataset with reduced dimensionality
+
+    // Name of the output file (tests/output/output.dts by default)
+    string outputFileName="tests/output/output.dts";
+    int K = 5; // Number of clusters (5 by default)
     Clustering clustering; // Clustering object
-    int K; // Number of clusters to use
-    unsigned int minSeed, maxSeed; // Range of seeds
-    ifstream inputFile; // Input file stream for the loc file
 
-    // Check if the number of arguments is valid.
-    
-    if (argc < 5){
-        showHelp(cerr, "Not enough arguments");
-        return 1;
+    // Indicates if all the parameters starting with - has been read
+    bool hasBeenReadInitialParameters = false; 
+    int indexInputFile = -1; // index of the input file in argv
+
+    bool error = false; //comprueba que no haya ningún error. Detiene el programa si ocurre.
+
+    // Loop to process program arguments
+    for (int i = 1; i < argc && !hasBeenReadInitialParameters && !error; i++) {
+        string arg = argv[i];
+ 
+        if (arg == "-K") {
+
+            if (i + 1 < argc) {
+                i++;
+                K = atoi(argv[i]);
+
+            } else {
+                showHelp(cerr, "Missing value for -K");
+                error = true;
+            }
+
+        } else if (arg == "-o") {
+
+            if (i + 1 < argc) {
+                i++;
+                outputFileName = argv[i];
+
+            } else {
+                showHelp(cerr, "Missing value for -o");
+                error = true;
+            }
+
+        } else if (arg[0] != '-') {
+            // No empieza por '-': es el fichero de entrada
+            indexInputFile = i;
+            hasBeenReadInitialParameters = true;
+
+        } else {
+            showHelp(cerr, "Unknown parameter: " + arg);
+            error = true;
+        }
     }
-
-    // Read K from the command line arguments
-    K = atoi(argv[1]);
-    
-    // Read the seed range from the command line arguments 
-    // (use stoul to convert string to unsigned int)
-    minSeed = stoul(argv[2]);
-    maxSeed = stoul(argv[3]);
-    
-    // Read from the input file the locations directly into the VectorLocation object
-    inputFile.open(argv[4]);
-    if (inputFile) {
-        locations.load(inputFile);
-        inputFile.close();
+ 
+    // Comprobamos que se ha proporcionado el fichero de entrada
+    if (indexInputFile == -1) {
+        showHelp(cerr, "Input file not provided");
+        error = true;
     }
-    else{
-        string error_read_input = "Error opening input file: ";
-        error_read_input += argv[4];
-        showHelp(cerr, error_read_input);
-        return 1;
-    }
-
-    // Initialize the arrayClustering object with an initial capacity of 2
-    InitializeArrayClustering(arrayClustering, INITIAL_ARRAY_CLUSTERING_CAPACITY);
-    
-    // For each seed in the given range, perform a clustering and store it in
-    // arrayClustering
-    for (unsigned int i = minSeed; i <= maxSeed; i++) {
-        clustering.set(locations, K, i);
-        clustering.run();
-        AppendArrayClustering(arrayClustering, clustering);
-    }
-
-    // Sort the different Clustering objects stored in arrayClustering
-    SortArrayClustering(arrayClustering);
-
-    // Show statistics of each clustering in the sorted order
-    for (int i = 0; i < arrayClustering.size; ++i) {
-        cout << "Clustering " << i << ":" << endl;
-        cout << arrayClustering.clustering[i].getStatistics() << endl;
-    }
-
-    // Deallocate the dynamic memory used by arrayClustering
-    DeallocateArrayClustering(arrayClustering);
-    
-    return 0;
+ 
+    // Load the input dataset from the given file
+    inputDataset.load(argv[indexInputFile]);
+ 
+    // Set the location vector and K in the clustering object. Use the default
+    // seed value.
+    clustering.set(inputDataset.getVectorLocation(), K);
+ 
+    // Run the clustering algorithm
+    clustering.run();
+ 
+    // Get the dataset with reduced dimensionality
+    outputDataset = inputDataset.getReducedDataSet(clustering);
+ 
+    // Save the output dataset in the given file
+    outputDataset.save(outputFileName);
+ 
+    return error ? 1 : 0 //devuelve 1 si !error, 0 si error == true.
 }
