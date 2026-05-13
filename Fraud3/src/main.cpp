@@ -115,26 +115,28 @@ int main(int argc, char* argv[]) {
     }
  
     // Comprobamos que se ha proporcionado el fichero de entrada
-    if (indexInputFile == -1) {
+    if (indexInputFile == -1 && !error) {
         showHelp(cerr, "Input file not provided");
         error = true;
     }
- 
-    // Load the input dataset from the given file
-    inputDataset.load(argv[indexInputFile]);
- 
-    // Set the location vector and K in the clustering object. Use the default
-    // seed value.
-    clustering.set(inputDataset.getVectorLocation(), K);
- 
-    // Run the clustering algorithm
-    clustering.run();
- 
-    // Get the dataset with reduced dimensionality
-    outputDataset = inputDataset.getReducedDataSet(clustering);
- 
-    // Save the output dataset in the given file
-    outputDataset.save(outputFileName);
- 
-    return error ? 1 : 0; //devuelve 1 si !error, 0 si error == true.
+    
+    if(!error){
+        // Load the input dataset from the given file
+        inputDataset.load(argv[indexInputFile]);
+    
+        // Set the location vector and K in the clustering object. Use the default
+        // seed value.
+        clustering.set(inputDataset.getVectorLocation(), K);
+    
+        // Run the clustering algorithm
+        clustering.run();
+    
+        // Get the dataset with reduced dimensionality
+        outputDataset = inputDataset.getReducedDataSet(clustering);
+    
+        // Save the output dataset in the given file
+        outputDataset.save(outputFileName);
+    }
+
+    return error ? 1 : 0; // devuelve 1 si error==true, 0 si error==false
 }
