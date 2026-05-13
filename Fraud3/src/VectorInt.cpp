@@ -54,7 +54,7 @@
      */
 
     void VectorInt::aumentCapacidadMemoria(){
-        int _capacity =+ BLOCK_SIZE;
+        _capacity += BLOCK_SIZE;
         int* aux = new int[_capacity];
 
         for (int i = 0; i < _size; i++){
@@ -89,7 +89,7 @@
  * parameter
  */
 VectorInt::VectorInt(int size) {
-    if (_size < 0){
+    if (size < 0){
         throw std::out_of_range("VectorInt: _size invalido, que debe ser >= 0");
     }
 

@@ -88,7 +88,7 @@ int main(int argc, char* argv[]) {
                 K = atoi(argv[i]);
 
             } else {
-                showHelp(cerr, "Missing value for -K");
+                showHelp(cerr, "Number of clusters not provided after -K");
                 error = true;
             }
 
