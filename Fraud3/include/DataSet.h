@@ -247,6 +247,16 @@ public:
     void load(std::string fileName);
     
     /**
+     * @brief Comprueba instanceIndex para evitar errores.
+     */
+    void compruebaInstanceIndex(int instanceIndex) const;
+
+    /**
+     * @brief Comprueba locationIndex para evitar errores.
+     */
+    void compruebaLocationIndex(int locationIndex) const;
+
+    /**
      * @brief Gets a new DataSet from this DataSet. The DataSet will contain 
      * the same number of instances as this DataSet, but the number of locations
      * is given by the number of clusters in the provided Clustering object.
