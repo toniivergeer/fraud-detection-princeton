@@ -44,7 +44,7 @@ public:
      * @param orig the VectorLocation object used as source for the copy. 
      * Input parameter
      */
-    VectorLocation(VectorLocation orig);
+    VectorLocation(const VectorLocation& orig);
     
     /**
      * @brief Destructor
@@ -58,7 +58,7 @@ public:
      * Input parameter
      * @return A reference to this object
      */
-    VectorLocation operator=(VectorLocation orig);
+    VectorLocation& operator=(const VectorLocation& orig);
     
     /**
      * @brief Gets the number of elements in the vector of this object
@@ -84,11 +84,11 @@ public:
      * 
      * For example, the following is the content of the string for a 
      * VectorLocation object with 4 locations:
-4
-24.8 14.9 Quadrangle
-25.6 14.9 Ivy
-26.4 14.9 Cottage
-27.3 14.5 Cap & Gown
+     *   4
+     *   24.8 14.9 Quadrangle
+     *   25.6 14.9 Ivy
+     *   26.4 14.9 Cottage
+     *   27.3 14.5 Cap & Gown
      * Query method
      * @return string with information about this VectorLocation object
      */
@@ -115,8 +115,8 @@ public:
      * @param topRight The Location of the top right point. Input parameter
      * @return A VectorLocation with the selected Locations.
      */
-    VectorLocation select(const Location & bottomLeft, 
-        const Location &topRight) const;
+    VectorLocation select(const Location& bottomLeft, 
+        const Location& topRight) const;
     
     /**
      * @brief Removes all the elements in this object, leaving the container 
@@ -135,7 +135,7 @@ public:
      * @param pos position in the VectorLocation object. Input parameter
      * @return A const reference to the Location element at the given position
      */
-    const Location & at(int pos) const;
+    const Location& at(int pos) const;
     
     /**
      * @brief Gets a reference to the Location element at the given position. 
@@ -145,7 +145,7 @@ public:
      * @param pos position in the VectorLocation object. Input parameter
      * @return A reference to the Location element at the given position.
      */
-    Location & at(int pos);
+    Location& at(int pos);
 
     /**
      * @brief Appends a copy of the given Location object at the first free 
@@ -192,14 +192,14 @@ public:
      * location.
      * If returns -1 if this vector is empty
      */
-    int nearest(Location location);
+    int nearest(const Location& location) const;
     
     /**
      * Assigns the provided value to all the elements in this vector
      * Modifier method
      * @param location A Location object. Input parameter
      */
-    void assign(Location location);
+    void assign(const Location& location);
 
     /**
      * @brief Reads from the provided input stream the information
@@ -216,7 +216,7 @@ public:
      * number of Location read from the input stream is negative.
      * @param is Input stream. Input/output parameter
      */
-    void load(std::istream is);
+    void load(std::istream& is);
 
 private:
     /**
