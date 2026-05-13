@@ -90,7 +90,7 @@
  */
 VectorInt::VectorInt(int size) {
     if (_size < 0){
-        throw std::out_of_range("VectorInt: _size invalido, que debe ser <= 0");
+        throw std::out_of_range("VectorInt: _size invalido, que debe ser >= 0");
     }
 
     reservarMemoria(size);
