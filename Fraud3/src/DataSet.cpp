@@ -101,7 +101,7 @@ void DataSet::copiarMatriz(const DataSet& matriz_orig){
  * Input parameter
  */
 
-DataSet::DataSet(int nInstances = 0, int nLocations = 0){
+DataSet::DataSet(int nInstances, int nLocations){
     //inicializamos variables:
     _nInstances = nInstances;
     _nLocations = nLocations;
@@ -354,7 +354,7 @@ void DataSet::setLabel(int instanceIndex, int label){
  * Input parameter
  */
 
-void DataSet::initInstances(int value = 0){
+void DataSet::initInstances(int value){
     for (int i = 0; i < _nInstances; i++){
 
         for(int j = 0; j < _nLocations; j++){
