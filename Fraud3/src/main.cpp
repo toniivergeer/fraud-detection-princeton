@@ -136,5 +136,5 @@ int main(int argc, char* argv[]) {
     // Save the output dataset in the given file
     outputDataset.save(outputFileName);
  
-    return error ? 1 : 0 //devuelve 1 si !error, 0 si error == true.
+    return error ? 1 : 0; //devuelve 1 si !error, 0 si error == true.
 }
