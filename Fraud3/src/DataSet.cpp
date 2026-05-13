@@ -74,14 +74,90 @@ void DataSet::copiarMatriz(const DataSet& matriz_orig){
     for (int i = 0; i < _nInstances; i++){
 
         for (int j = 0; j < _nLocations; j++){
-            
+
             _values[i][j] = matriz_orig._values[i][j];
         }
     }
 }
 
-//-----------------------------------------------------------------------------------
+//--------------------- Constructores, Destructor, Operador de Asignacion: ---------------------
 
+/**
+     * @brief It builds a DataSet object with the provided number of instances
+     * and number of locations. This class uses a bidimensional matrix with 
+     * nInstances rows and nLocations columns to store the values of the set 
+     * of instances.
+     * Note that this constructor also builds the vector (with a size equal to 
+     * nInstances) of labels and the vector of locations (with a size equal to 
+     * nLocations).
+     * This constructor initializes with a value of 0 all the values in the 2D
+     * matrix. 
+     * The vector of labels is initialized with a value of 0 for each instance.
+     * The Location objects in the vector of locations are built with the 
+     * Location default constructor.
+     * @param nInstances An integer with the number of instances.
+     * Input parameter
+     * @param nLocations An integer with the number of locations.
+     * Input parameter
+     */
+    DataSet::DataSet(int nInstances = 0, int nLocations = 0){
+        //inicializamos variables:
+        _nInstances = nInstances;
+        _nLocations = nLocations;
+        _labels = nInstances;
+        _locations = nLocations;
+
+        //reservamos la matriz en memoria dinamica:
+        reservarMatriz();
+    }
+    
+    /**
+     * @brief Copy constructor
+     * @param orig the DataSet object used as source for the copy. 
+     * Input parameter
+     */
+    DataSet::DataSet(const DataSet& orig){
+        _nInstances = orig._nInstances;
+        _nLocations = orig._nLocations;
+        _labels = orig._labels;
+        _locations = orig._locations;
+
+        reservarMatriz();
+
+        copiarMatriz(orig);
+    }
+    
+    /**
+     * @brief Destructor
+     */
+    DataSet::~DataSet(){
+        liberarMatriz();
+    }
+    
+    /**
+     * @brief Overloading of the assignment operator for DataSet class
+     * Modifier method
+     * @param orig the DataSet object used as source for the assignment.
+     * Input parameter
+     * @return A reference to this object
+     */
+    DataSet& DataSet::operator=(const DataSet& orig){
+        
+        if (this != &orig){
+            liberarMatriz();
+
+            _nInstances = orig._nInstances;
+            _nLocations = orig._nLocations;
+            _labels     = orig._labels;
+            _locations  = orig._locations;
+
+            reservarMatriz();
+            copiarMatriz(orig);
+    }
+    return *this;
+}
+
+//------------------------------------------------------------------------------------
 
 std::string DataSet::toString() const {
     string result;
