@@ -317,7 +317,8 @@ private:
 
     /**
      * @brief Reserva la matriz dinámica 2D con _nInstances filas y _nLocations
-     * columnas. Todos los valores se inicializan a 0.
+     * columnas. Todos los valores se inicializan a 0. _nInstances y _nLocations ya deben
+     * estar fijados.
      */
 
     void reservarMatriz();
@@ -334,7 +335,7 @@ private:
      */
 
     void copiarMatriz(const DataSet& matriz_orig);
-    
+
 }; // end of class DataSet
 
 #endif /* DATASET_H */
