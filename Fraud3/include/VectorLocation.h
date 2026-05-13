@@ -177,7 +177,7 @@ public:
     void join(const VectorLocation& locations);
     
     /**
-     * Sorts the array of locations in this object by increasing alphabetical 
+     * @brief Sorts the array of locations in this object by increasing alphabetical 
      * order of the name of its location (a string). 
      * Modifier method
      */

@@ -200,16 +200,13 @@ int VectorLocation::getCapacity() const{
     * @return string with information about this VectorLocation object
     */
 std::string VectorLocation::toString() const{
+    
     std::string result = std::to_string(_size) + "\n";
-    for (int i = 0; i < _size; i++) {
-        // he modificado esta linea de abajo porque sino no funcionaba
-        // ya que std::to_string no acepta un Location
-        // ,me suena que lo menciono en clase o en un correo.
-        // result += std::to_string(_locations[i]) + "\n";
 
-        // BIEN: Location ya tiene su propio metodo de toString()
+    for (int i = 0; i < _size; i++) {
         result += _locations[i].toString() + "\n";
     }
+
     return result;
 }
 
@@ -231,28 +228,34 @@ std::string VectorLocation::toString() const{
  * @return If found, it returns the position where the location
  * was found. Otherwise it returns -1
  */
-int VectorLocation::findLocation(const Location &location) const{
-    for (int i=0; i<_size; i++){
-        if(_locations[i].getName() == location.getName() ) return i;
+int VectorLocation::findLocation(const Location& location) const{
+
+    int index_loc_found = -1;
+
+    for (int i = 0; i < _size && index_loc_found == -1; i++){
+
+        if(_locations[i].getName() == location.getName() ){
+            index_loc_found = i;
+        }
     }
-    return -1;
+
+    return index_loc_found;
 };
 
 /**
  * @brief Returns a VectorLocation object with those locations whose
  * positions are inside the area determined by the two given Locations.
  * Query method
-
-//conviene usar isInsideArea && append
-
  * @param bottomLeft The Location of the bottom left point. Input parameter
  * @param topRight The Location of the top right point. Input parameter
  * @return A VectorLocation with the selected Locations.
  */
 
 
-VectorLocation VectorLocation::select(const Location &bottomLeft, const Location &topRight) const{
+VectorLocation VectorLocation::select(const Location& bottomLeft, const Location& topRight) const{
+    
     VectorLocation vector_result;
+
         for (int i = 0; i < _size; i++) {
         // Si la location esta dentro del area, la anadimos al resultado
         if (_locations[i].isInsideArea(bottomLeft, topRight)) {
@@ -336,26 +339,22 @@ Location &VectorLocation::at(int pos){
  */
 
 bool VectorLocation::append(const Location &location){
-    // 0---- Si el nombre esta vacio, no anadimos
-    if (location.getName().empty()) {
-        return false;
+    bool aniadir = true;
+    // Si el nombre esta vacio o ya existe uno con este nombre --> NO ANIADIMOS
+    if (location.getName().empty() || findLocation(location) != -1){
+        aniadir = false;
     }
 
-    // 0---- Si ya existe una Location con ese nombre, no anadimos
-    if (findLocation(location) != -1) {
-        return false;
+    if(aniadir){
+        if (_size >= _capacity) { //si no hay suficiente espacio, realojamos.
+            aumentCapacidadMemoria();
+        }
+
+        _locations[_size] = location;
+        _size++;
     }
-
-    // 1. Si el array esta lleno, lanzamos excepcion
-    if (_size >= DIM_VECTOR_LOCATIONS) {
-        throw std::out_of_range("VectorLocation::append el array esta lleno");
-    }
-
-    // 2. Todo ok: anadimos la location en la siguiente posicion libre
-    _locations[_size] = location;
-    _size++;
-
-    return true;
+    
+    return aniadir;
 };
 
 /**
@@ -377,17 +376,18 @@ void VectorLocation::join(const VectorLocation &locations){
 };
 
 /**
- * Sorts the array of locations in this object by increasing alphabetical
+ * @brief Sorts the array of locations in this object by increasing alphabetical
  * order of the name of its location (a string).
  * Modifier method
  */
 
-// el bubble sort q es mas eficiente
-
 void VectorLocation::sort(){
-    for (int i = 0; i < _size - 1; i++) {
+    for (int i = 0; i < _size - 1; i++) { //metodo bubble sort
+
         for (int j = 0; j < _size - 1 - i; j++) {
+
             if (_locations[j].getName() > _locations[j+1].getName()) {
+                
                 Location temp = _locations[j];
                 _locations[j] = _locations[j+1];
                 _locations[j+1] = temp;
@@ -407,23 +407,24 @@ void VectorLocation::sort(){
  */
 
 int VectorLocation::nearest(const Location& location) const{
-    
 
-    // en verdad se podria usar el metodo distance en vez de squaredistance
-    //, pero seria mas computo
-    
-    if (_size == 0) return -1;
+    int posNearest = -1;
 
-    int posNearest = 0;
-    double minDist = _locations[0].squaredDistance(location);
+    if (_size > 0){
 
-    for (int i = 1; i < _size; i++) {
-        double dist = _locations[i].squaredDistance(location);
-        if (dist < minDist) {
-            minDist = dist;
-            posNearest = i;
+        double minDist = _locations[0].squaredDistance(location);
+
+        for (int i = 1; i < _size; i++) {
+            
+            double dist = _locations[i].squaredDistance(location);
+        
+            if (dist < minDist) {
+                minDist = dist;
+                posNearest = i;
+            }
         }
     }
+    
     return posNearest;
 };
 
@@ -460,31 +461,24 @@ void VectorLocation::assign(const Location& location){
  * @param is Input stream. Input/output parameter
  */
 
-
-// le he afnadido & al istream, preguntar en clase
 void VectorLocation::load(std::istream& is){
 
-    VectorLocation::clear();
+    clear();
 
     int n;
-    is >> n;
+
+    is >> n; //se guarda el stream en n (mismo significado que cin >> n)
 
     if (n < 0) {
-        VectorLocation::clear();
+        clear();
         throw std::out_of_range("VectorLocation::load: numero de locations negativo");
-    }
-    if (n > DIM_VECTOR_LOCATIONS) {
-        VectorLocation::clear();
-        throw std::out_of_range("VectorLocation::load: numero de locations supera la capacidad");
     }
 
     for (int i = 0; i < n; i++) {
+
         Location templocation;
         templocation.load(is);
-        VectorLocation::append(templocation);
-        // recordar q el append tenia excepciones capacidad superada,
-        // nombre repetido o sin nombre;
-        // y aparte es un metodo de tipo bunealno, pero su principal 
-        // funcion es añadir un elemento al final y aumentar 1 _size
+        
+        append(templocation); //append se encarga de llamar a aumentCapacidadMemoria() si fuera necesario.
     }
 };
