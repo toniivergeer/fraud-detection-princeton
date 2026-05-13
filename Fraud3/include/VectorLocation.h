@@ -239,6 +239,34 @@ private:
      * Size of new memory blocks when resizing the dynamic array _locations
      */
     static const int BLOCK_SIZE=20;
+
+    /**
+     * @brief Reserva un array dinámico de cap objetos de tipo Location e inicializa los valores:
+     * _values = nullptr, _size = 0 y _capacity = 0 (si cap = 0)
+     * con los valores por defecto del constructor Location (si cap > 0)
+     */
+
+    void reservarMemoria(int cap);
+
+    /**
+     * @brief Libera la memoria dinámica de _locations.
+     */
+
+    void liberarMemoria();
+
+    /**
+     * @brief Aumenta la capacidad del array en BLOCK_SIZE posiciones (crea un array
+     * auxiliar, copia los elementos y elimina el antiguo).
+     */
+
+    void aumentCapacidadMemoria();
+
+    /**
+     * @brief Copia el contenido del VectorInt original en este objeto. Se asume que
+     * _locations apunta a un array de tamaño >= vectorOriginal._size
+     */
+
+    void CopiarVectorLocation(const VectorLocation& vectorOriginal);
 }; // end of class VectorLocation
 
 #endif /* VECTORLOCATION_H */

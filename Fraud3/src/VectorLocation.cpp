@@ -35,18 +35,131 @@
 * parameter
 */
 
-//es  un setter condicional
-VectorLocation::VectorLocation(int size){
-    if (size < 0 || size > DIM_VECTOR_LOCATIONS) {
-        throw std::out_of_range("VectorLocation: size invalido, que sea entre 1 y 100");
+//-----------------------MÉTODOS PRIVADOS-----------------------------
+    /**
+     * @brief Reserva un array dinámico de cap objetos de tipo Location e inicializa los valores
+     * con los valores por defecto del constructor Location (si cap > 0). En caso contrario,
+     * _locations = nullptr
+     */
+
+    void VectorLocation::reservarMemoria(int cap){
+        _capacity = cap;
+        _size = 0;
+        if (cap > 0){
+            _locations = new Location[cap]; //para el VectorLocation usamos el Location por defecto.
+        }
+        else{
+            _locations = nullptr;
+        }
     }
+
+    /**
+     * @brief Libera la memoria dinámica de _locations.
+     */
+
+    void VectorLocation::liberarMemoria(){
+        delete[] _locations;
+        _capacity = 0;
+        _size = 0;
+        _locations = nullptr;
+    }
+
+    /**
+     * @brief Aumenta la capacidad del array en BLOCK_SIZE posiciones (crea un array
+     * auxiliar, copia los elementos y elimina el antiguo).
+     */
+
+    void VectorLocation::aumentCapacidadMemoria(){
+        _capacity += BLOCK_SIZE;
+        Location* aux = new Location[_capacity];
+
+        for(int i = 0; i < _size; i++){
+            aux[i] = _locations[i];
+        }
+        delete[] _locations; //borramos la memoria de _locations.
+        _locations = aux; //asignamos la dirección de memoria de aux a _locations.
+    }
+
+    /**
+     * @brief Copia el contenido del VectorInt original en este objeto. Se asume que
+     * _locations apunta a un array de tamaño >= vectorOriginal._size
+     */
+
+    void VectorLocation::CopiarVectorLocation(const VectorLocation& vectorOriginal){
+        _size = vectorOriginal._size;
+        _capacity = vectorOriginal._capacity;
+
+        for (int i = 0; i < _size; i++){
+            _locations[i] = vectorOriginal._locations[i];
+        }
+    }
+
+
+//--------------------------------------------------------------------
+
+/**
+ * @brief It builds a VectorLocation object (vector of Location) with a 
+ * size and capacity equal to the provided value (@p size). Each element
+ * will be filled with the Location constructor elements by default.
+ * @throw std::out_of_range Throws a std::out_of_range exception if
+ * @p size < 0
+ * @param size The size for the vector of integers in this object. Input
+ * parameter
+ */
+VectorLocation::VectorLocation(int size){
+    if (size < 0) {
+        throw std::out_of_range("VectorLocation: size invalido");
+    }
+    reservarMemoria(size);
     _size = size;
     
-    // "Each element in the vector is initialized with the default Location constructor" 
-    // ya se cumple solo por ser un array de objetos ( ya que el constructor por 
-    // defecto de Location ya hace _x = _y = 0 y _name = "".)
-    // OJO en uno de punteros si que habria que inicializarlo
 };
+
+
+/**
+ * @brief Copy constructor
+ * @param orig the VectorLocation object used as source for the copy. 
+ * Input parameter
+ */
+VectorLocation::VectorLocation(const VectorLocation& orig){
+    _locations = nullptr;
+    _size = 0;
+    _capacity = 0;
+
+    if (orig._capacity > 0) {
+        _locations = new Location[orig._capacity];
+        CopiarVectorLocation(orig);
+    }
+}
+
+/**
+ * @brief Destructor
+ */
+VectorLocation::~VectorLocation(){
+    liberarMemoria();
+}
+
+/**
+ * @brief Overloading of the assignment operator for VectorLocation class
+ * Modifier method
+ * @param orig the VectorLocation object used as source for the assignment.
+ * Input parameter
+ * @return A reference to this object
+ */
+VectorLocation& VectorLocation::operator=(const VectorLocation& orig){
+    
+    if (this != &orig){ //evitamos que se libere la memoria del propio objeto, en caso de que ocurriese.
+        liberarMemoria();
+
+        if(orig._capacity > 0){
+            _locations = new Location[orig._capacity];
+            CopiarVectorLocation(orig);
+        }
+    }
+
+    return *this;
+}
+
 
 /**
  * @brief Gets the number of elements in the vector of this object
@@ -64,7 +177,7 @@ int VectorLocation::getSize() const{
  */
 
 int VectorLocation::getCapacity() const{
-    return DIM_VECTOR_LOCATIONS;
+    return _capacity;
 };
 
 /**

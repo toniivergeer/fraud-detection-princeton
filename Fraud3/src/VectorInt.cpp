@@ -84,7 +84,7 @@
  * size and capacity equal to the provided value (@p size). Each element
  * will be filled with a value equal to 0.
  * @throw std::out_of_range Throws a std::out_of_range exception if
- * @p size < 0 or size>DIM_VECTOR_VALUES
+ * @p size < 0
  * @param size The size for the vector of integers in this object. Input
  * parameter
  */
@@ -104,7 +104,7 @@ VectorInt::VectorInt(int size) {
  * parameter
  */
 VectorInt::VectorInt(const VectorInt& orig) {
-    _values = nullptr;      // evitar que deallocate() libere basura
+    _values = nullptr;      
     _size     = 0;
     _capacity = 0;
  
@@ -130,7 +130,7 @@ VectorInt::~VectorInt(){
  */
     VectorInt& VectorInt::operator=(const VectorInt& orig){
         
-        if( this != &orig){ //evitamos que LiberarMemoria() libere la memoria del propio objeto en caso de que ocurra.
+        if( this != &orig){ //evitamos que liberarMemoria() libere la memoria del propio objeto en caso de que ocurra.
             liberarMemoria();
             
             reservarMemoria(orig._capacity);
